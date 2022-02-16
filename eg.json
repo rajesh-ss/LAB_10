@@ -1,1 +1,7 @@
-{"price":null}
+{
+    "model": "m1",
+    "type": "abc",
+    "brand":"xyz",
+    "price":1200000
+
+}

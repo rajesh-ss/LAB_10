@@ -39,23 +39,24 @@ readjs("./eg.json", (err, myobb) => {
     return;
   }
   dataobbj = myobb;
-  //console.log(myobb.brand); 
+  console.log(myobb); 
 });
 
 
 /***
  * update the json file change the brand to "abc"
  */
-function updater(filePath){
+function updater(filePath, objfl){
 
         // increase customer order count by 1
-        dataobbj.price += 100000;
-        rd.writeFile(filePath, JSON.stringify(dataobbj), err => {
+        objfl.price += 100000;
+        rd.writeFile(filePath, JSON.stringify(objfl), err => {
           if (err) console.log("Error writing file:", err);
         });
 }
 
-updater("./eg.json");
+
+/* updater("./userInfo.json"); */
 
 /**
  * express JS 
@@ -75,23 +76,52 @@ let tab = `</hr><table>
 </tr></table>`
 
 // Require express and create an instance of it
-var express = require('express');
-var app = express();
 
-// on the request to root (localhost:3000/)
+
+const express = require('express');
+const http = require('http');
+//const bcrypt = require('bcrypt');
+const path = require("path");
+const bodyParser = require('body-parser');
+//const users = require('./data').userDB;
+
+
+
+const app = express();
+const server = http.createServer(app);
+
+
+/* // on the request to root (localhost:3000/)
 app.get('/', function (req, res) {
-    res.send('Landing page');
+    //res.send('Landing page');
+    res.sendFile(path.join(__dirname,'./frm.html'));
+});
+ */
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname,'./')));
+
+app.use(express.json()); // Used to parse JSON bodies
+//app.use(express.urlencoded()); //Parse URL-encoded bodies
+
+
+app.get('/',(req,res) => {
+  res.sendFile(path.join(__dirname,'./frm.html'));
+  });
+
+
+  app.post('/', function (req, res) {
+    const { username, password } = req.body;
+  res.send("Welcome "+JSON.stringify(req.body.fname));
+  updater("./userInfo.json", req.body);
 });
 
-// On localhost:3000/welcome
+
 app.get('/usedVeh', function (req, res) {
-    res.send('Used Vehicle Dealer, details of veh -'
-    +'<tr><td>'+dataobbj.brand+'</td></tr>'+
-    +'<tr><td>'+dataobbj.type+'</td></tr>'+
-    +'<tr><td>'+dataobbj.model+'</td></tr>'+
-    +'<tr><td>'+dataobbj.price+'</td></tr>'
-    );
-});
+  res.send("sorry for the inconvenience :-(, site will be up and running soon :-)");
+
+}); 
+
+
 
 // Change the 404 message modifing the middleware
 app.use(function(req, res, next) {
